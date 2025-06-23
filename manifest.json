@@ -12,100 +12,17 @@
     "categories": ["productivity", "utilities"],
     "icons": [
         {
-            "src": "images/icon-72x72.png",
-            "sizes": "72x72",
-            "type": "image/png",
-            "purpose": "any maskable"
-        },
-        {
-            "src": "images/icon-96x96.png",
-            "sizes": "96x96",
-            "type": "image/png",
-            "purpose": "any maskable"
-        },
-        {
-            "src": "images/icon-128x128.png",
-            "sizes": "128x128",
-            "type": "image/png",
-            "purpose": "any maskable"
-        },
-        {
-            "src": "images/icon-144x144.png",
-            "sizes": "144x144",
-            "type": "image/png",
-            "purpose": "any maskable"
-        },
-        {
-            "src": "images/icon-152x152.png",
-            "sizes": "152x152",
-            "type": "image/png",
-            "purpose": "any maskable"
-        },
-        {
-            "src": "images/icon-192x192.png",
-            "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "any maskable"
-        },
-        {
-            "src": "images/icon-384x384.png",
-            "sizes": "384x384",
+            "src": "images/icon-512x512.png",
+            "sizes": "512x512",
             "type": "image/png",
             "purpose": "any maskable"
         },
         {
             "src": "images/icon-512x512.png",
-            "sizes": "512x512",
+            "sizes": "192x192",
             "type": "image/png",
-            "purpose": "any maskable"
+            "purpose": "any"
         }
     ],
-    "screenshots": [
-        {
-            "src": "images/screenshot1.png",
-            "sizes": "540x720",
-            "type": "image/png",
-            "form_factor": "narrow"
-        },
-        {
-            "src": "images/screenshot2.png",
-            "sizes": "540x720",
-            "type": "image/png",
-            "form_factor": "narrow"
-        }
-    ],
-    "shortcuts": [
-        {
-            "name": "新しい伝言",
-            "short_name": "伝言",
-            "description": "新しい伝言を作成する",
-            "url": "/?action=create",
-            "icons": [
-                {
-                    "src": "images/shortcut-create.png",
-                    "sizes": "192x192"
-                }
-            ]
-        },
-        {
-            "name": "伝言一覧",
-            "short_name": "一覧",
-            "description": "登録済みの伝言を確認する",
-            "url": "/?action=list",
-            "icons": [
-                {
-                    "src": "images/shortcut-list.png",
-                    "sizes": "192x192"
-                }
-            ]
-        }
-    ],
-    "prefer_related_applications": false,
-    "related_applications": [],
-    "edge_side_panel": {
-        "preferred_width": 400
-    },
-    "launch_handler": {
-        "client_mode": "focus-existing"
-    }
+    "prefer_related_applications": false
 }
