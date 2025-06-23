@@ -395,30 +395,6 @@ body {
     box-shadow: none;
 }
 
-.test-btn {
-    width: 100%;
-    background: #2196F3;
-    color: white;
-    border: 4px solid #000;
-    border-radius: 15px;
-    padding: 10px;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 4px 4px 0px #000;
-    transition: all 0.1s;
-    margin-top: 10px;
-}
-
-.test-btn:hover {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0px #000;
-}
-
-.test-btn:active {
-    transform: translate(4px, 4px);
-    box-shadow: none;
-}
 
 /* 通知一覧 */
 .notification-item {
