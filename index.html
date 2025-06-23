@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>何でもプッシュ通知</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffff00">
+</head>
+<body>
+    <div class="container">
+        <!-- 上段：吹き出し -->
+        <div class="speech-bubble-section">
+            <div class="speech-bubble">
+                <p id="latest-message">まだ伝言がありません</p>
+            </div>
+        </div>
+
+        <!-- 中段：キャラクター -->
+        <div class="character-section">
+            <button class="nav-btn prev-btn" id="prev-character">‹</button>
+            <div class="character-container">
+                <img id="character-image" src="images/character1.png" alt="キャラクター" class="character-image">
+                <div class="character-name" id="character-name">親友</div>
+            </div>
+            <button class="nav-btn next-btn" id="next-character">›</button>
+        </div>
+
+        <!-- 下段：伝言ボタン -->
+        <div class="action-section">
+            <button class="message-btn" id="message-btn">伝言する</button>
+        </div>
+    </div>
+
+    <!-- モーダル -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h2>伝言メニュー</h2>
+                <button class="close-btn" id="close-modal">×</button>
+            </div>
+            <div class="modal-content">
+                <div class="tab-container">
+                    <button class="tab-btn active" data-tab="create">新しい伝言</button>
+                    <button class="tab-btn" data-tab="list">伝言一覧</button>
+                </div>
+                
+                <!-- 新しい伝言タブ -->
+                <div class="tab-content active" id="create-tab">
+                    <form id="message-form">
+                        <div class="form-group">
+                            <label for="message-text">伝言内容</label>
+                            <textarea id="message-text" placeholder="未来の自分への伝言を入力してください" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>通知タイプ</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="notification-type" value="timer" checked>
+                                    <span>タイマー（○分後）</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="notification-type" value="schedule">
+                                    <span>スケジュール（日時指定）</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- タイマー設定 -->
+                        <div class="form-group timer-settings">
+                            <label for="timer-minutes">何分後？</label>
+                            <input type="number" id="timer-minutes" min="1" max="1440" value="10">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="snooze-enabled">
+                                <span>スヌーズ機能（5分間隔）</span>
+                            </label>
+                        </div>
+                        
+                        <!-- スケジュール設定 -->
+                        <div class="form-group schedule-settings" style="display: none;">
+                            <label for="schedule-time">時刻</label>
+                            <input type="time" id="schedule-time">
+                            <label>曜日（繰り返し）</label>
+                            <div class="weekday-group">
+                                <label class="weekday-label"><input type="checkbox" value="0">日</label>
+                                <label class="weekday-label"><input type="checkbox" value="1">月</label>
+                                <label class="weekday-label"><input type="checkbox" value="2">火</label>
+                                <label class="weekday-label"><input type="checkbox" value="3">水</label>
+                                <label class="weekday-label"><input type="checkbox" value="4">木</label>
+                                <label class="weekday-label"><input type="checkbox" value="5">金</label>
+                                <label class="weekday-label"><input type="checkbox" value="6">土</label>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">伝言を託す</button>
+                    </form>
+                </div>
+                
+                <!-- 伝言一覧タブ -->
+                <div class="tab-content" id="list-tab">
+                    <div id="notification-list">
+                        <!-- 通知一覧がここに表示される -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
