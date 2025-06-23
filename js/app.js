@@ -274,8 +274,8 @@ class PushNotificationApp {
     }
 
 
-    // 通知表示
-    showNotification(notification) {
+    // 通知表示（ServiceWorker経由）
+    async showNotification(notification) {
         console.log('通知表示試行:', notification);
         
         if (!notification.active) {
@@ -285,28 +285,38 @@ class PushNotificationApp {
 
         console.log('通知権限:', Notification.permission);
         
-        if (Notification.permission === 'granted') {
-            try {
-                const notif = new Notification(notification.character, {
+        if (Notification.permission !== 'granted') {
+            console.error('通知権限がありません');
+            alert('通知権限を許可してください。');
+            return;
+        }
+
+        try {
+            // ServiceWorker経由で通知表示
+            if ('serviceWorker' in navigator) {
+                const registration = await navigator.serviceWorker.ready;
+                
+                await registration.showNotification(notification.character, {
                     body: notification.message,
                     icon: './images/icon-512x512.png',
                     badge: './images/icon-512x512.png',
                     tag: notification.id ? notification.id.toString() : 'notification',
-                    requireInteraction: true
+                    requireInteraction: true,
+                    actions: [
+                        {
+                            action: 'open',
+                            title: '開く'
+                        }
+                    ]
                 });
 
-                console.log('通知を表示しました:', notification.character, notification.message);
-
-                notif.onclick = () => {
-                    window.focus();
-                    notif.close();
-                };
-            } catch (error) {
-                console.error('通知表示エラー:', error);
+                console.log('✅ ServiceWorker経由で通知を表示しました:', notification.character, notification.message);
+            } else {
+                console.error('❌ ServiceWorkerがサポートされていません');
             }
-        } else {
-            console.error('通知権限がありません');
-            alert('通知権限を許可してください。');
+        } catch (error) {
+            console.error('❌ 通知表示エラー:', error);
+            alert('通知表示でエラーが発生しました: ' + error.message);
         }
     }
 
@@ -424,8 +434,8 @@ class PushNotificationApp {
         }
     }
 
-    // 即座通知テスト
-    testImmediateNotification() {
+    // 即座通知テスト（ServiceWorker経由）
+    async testImmediateNotification() {
         console.log('=== 即座通知テスト開始 ===');
         console.log('通知権限:', Notification.permission);
         console.log('PWA状態:', window.matchMedia('(display-mode: standalone)').matches);
@@ -437,53 +447,54 @@ class PushNotificationApp {
         }
 
         try {
-            // 即座に通知を表示
-            const testNotification = new Notification('テスト通知', {
-                body: '即座通知のテストです。この通知が表示されれば、Notification APIは正常に動作しています。',
-                icon: './images/icon-512x512.png',
-                badge: './images/icon-512x512.png',
-                tag: 'test-immediate',
-                requireInteraction: true
-            });
+            // ServiceWorker経由で即座に通知を表示
+            if ('serviceWorker' in navigator) {
+                const registration = await navigator.serviceWorker.ready;
+                
+                await registration.showNotification('テスト通知', {
+                    body: '即座通知のテストです。この通知が表示されれば、ServiceWorker経由の通知が正常に動作しています。',
+                    icon: './images/icon-512x512.png',
+                    badge: './images/icon-512x512.png',
+                    tag: 'test-immediate',
+                    requireInteraction: true
+                });
 
-            console.log('✅ 即座通知が作成されました');
+                console.log('✅ 即座通知がServiceWorker経由で表示されました');
 
-            testNotification.onclick = () => {
-                console.log('通知がクリックされました');
-                testNotification.close();
-            };
+                // 5秒後にsetTimeoutテスト
+                console.log('5秒後にsetTimeoutテストを実行します...');
+                setTimeout(async () => {
+                    console.log('=== 5秒setTimeout テスト ===');
+                    try {
+                        await registration.showNotification('5秒タイマーテスト', {
+                            body: '5秒のsetTimeoutが正常に動作しました。Android PWAでタイマーが動作しています。',
+                            icon: './images/icon-512x512.png',
+                            tag: 'test-timeout'
+                        });
+                        console.log('✅ 5秒setTimeoutテスト成功');
+                    } catch (error) {
+                        console.error('❌ 5秒setTimeoutテスト失敗:', error);
+                    }
+                }, 5000);
 
-            // 5秒後にsetTimeoutテスト
-            console.log('5秒後にsetTimeoutテストを実行します...');
-            setTimeout(() => {
-                console.log('=== 5秒setTimeout テスト ===');
-                try {
-                    const timeoutNotification = new Notification('5秒タイマーテスト', {
-                        body: '5秒のsetTimeoutが正常に動作しました。Android PWAでタイマーが動作しています。',
-                        icon: './images/icon-512x512.png',
-                        tag: 'test-timeout'
-                    });
-                    console.log('✅ 5秒setTimeoutテスト成功');
-                } catch (error) {
-                    console.error('❌ 5秒setTimeoutテスト失敗:', error);
-                }
-            }, 5000);
-
-            // 30秒後にsetTimeoutテスト
-            console.log('30秒後にsetTimeoutテストを実行します...');
-            setTimeout(() => {
-                console.log('=== 30秒setTimeout テスト ===');
-                try {
-                    const longTimeoutNotification = new Notification('30秒タイマーテスト', {
-                        body: '30秒のsetTimeoutが正常に動作しました。長時間タイマーもAndroid PWAで動作しています。',
-                        icon: './images/icon-512x512.png',
-                        tag: 'test-long-timeout'
-                    });
-                    console.log('✅ 30秒setTimeoutテスト成功');
-                } catch (error) {
-                    console.error('❌ 30秒setTimeoutテスト失敗:', error);
-                }
-            }, 30000);
+                // 30秒後にsetTimeoutテスト
+                console.log('30秒後にsetTimeoutテストを実行します...');
+                setTimeout(async () => {
+                    console.log('=== 30秒setTimeout テスト ===');
+                    try {
+                        await registration.showNotification('30秒タイマーテスト', {
+                            body: '30秒のsetTimeoutが正常に動作しました。長時間タイマーもAndroid PWAで動作しています。',
+                            icon: './images/icon-512x512.png',
+                            tag: 'test-long-timeout'
+                        });
+                        console.log('✅ 30秒setTimeoutテスト成功');
+                    } catch (error) {
+                        console.error('❌ 30秒setTimeoutテスト失敗:', error);
+                    }
+                }, 30000);
+            } else {
+                console.error('❌ ServiceWorkerがサポートされていません');
+            }
 
         } catch (error) {
             console.error('❌ 即座通知テスト失敗:', error);
