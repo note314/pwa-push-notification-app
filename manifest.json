@@ -2,23 +2,23 @@
     "name": "何でもプッシュ通知",
     "short_name": "プッシュ通知",
     "description": "キャラクターに未来の自分への伝言を託すプッシュ通知アプリ",
-    "start_url": "/",
+    "start_url": "./",
     "display": "standalone",
     "background_color": "#ffff00",
     "theme_color": "#ffff00",
     "orientation": "portrait",
-    "scope": "/",
+    "scope": "./",
     "lang": "ja",
     "categories": ["productivity", "utilities"],
     "icons": [
         {
-            "src": "images/icon-512x512.png",
+            "src": "./images/icon-512x512.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "any maskable"
         },
         {
-            "src": "images/icon-512x512.png",
+            "src": "./images/icon-512x512.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "any"

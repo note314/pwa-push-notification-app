@@ -1,9 +1,9 @@
 class PushNotificationApp {
     constructor() {
         this.characters = [
-            { name: '親友', image: 'images/character1.png' },
-            { name: 'おばちゃん', image: 'images/character2.png' },
-            { name: 'おじさん', image: 'images/character3.png' }
+            { name: '親友', image: './images/character1.png' },
+            { name: 'おばちゃん', image: './images/character2.png' },
+            { name: 'おじさん', image: './images/character3.png' }
         ];
         this.currentCharacterIndex = 0;
         this.notifications = [];
@@ -296,8 +296,8 @@ class PushNotificationApp {
         if (Notification.permission === 'granted') {
             const notif = new Notification(notification.character, {
                 body: notification.message,
-                icon: '/images/icon-192x192.png',
-                badge: '/images/icon-192x192.png',
+                icon: './images/icon-512x512.png',
+                badge: './images/icon-512x512.png',
                 tag: notification.id,
                 requireInteraction: true
             });
@@ -401,7 +401,7 @@ class PushNotificationApp {
     async registerServiceWorker() {
         if ('serviceWorker' in navigator) {
             try {
-                await navigator.serviceWorker.register('/sw.js');
+                await navigator.serviceWorker.register('./sw.js');
                 console.log('Service Worker registered');
             } catch (error) {
                 console.error('Service Worker registration failed:', error);

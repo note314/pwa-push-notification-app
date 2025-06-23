@@ -1,13 +1,14 @@
 const CACHE_NAME = 'push-notification-app-v1';
 const urlsToCache = [
-    '/',
-    '/index.html',
-    '/css/style.css',
-    '/js/app.js',
-    '/images/character1.png',
-    '/images/character2.png',
-    '/images/character3.png',
-    '/manifest.json'
+    './',
+    './index.html',
+    './css/style.css',
+    './js/app.js',
+    './images/character1.png',
+    './images/character2.png',
+    './images/character3.png',
+    './images/icon-512x512.png',
+    './manifest.json'
 ];
 
 // Service Worker インストール
@@ -79,8 +80,8 @@ self.addEventListener('push', (event) => {
 
     const options = {
         body: data.body || '新しい伝言があります',
-        icon: '/images/icon-192x192.png',
-        badge: '/images/icon-192x192.png',
+        icon: './images/icon-512x512.png',
+        badge: './images/icon-512x512.png',
         vibrate: [100, 50, 100],
         data: {
             dateOfArrival: Date.now(),
@@ -116,12 +117,12 @@ self.addEventListener('notificationclick', (event) => {
         event.waitUntil(
             clients.matchAll().then((clientList) => {
                 for (const client of clientList) {
-                    if (client.url === '/' && 'focus' in client) {
+                    if (client.url.endsWith('/') && 'focus' in client) {
                         return client.focus();
                     }
                 }
                 if (clients.openWindow) {
-                    return clients.openWindow('/');
+                    return clients.openWindow('./');
                 }
             })
         );
@@ -133,12 +134,12 @@ self.addEventListener('notificationclick', (event) => {
         event.waitUntil(
             clients.matchAll().then((clientList) => {
                 for (const client of clientList) {
-                    if (client.url === '/' && 'focus' in client) {
+                    if (client.url.endsWith('/') && 'focus' in client) {
                         return client.focus();
                     }
                 }
                 if (clients.openWindow) {
-                    return clients.openWindow('/');
+                    return clients.openWindow('./');
                 }
             })
         );
