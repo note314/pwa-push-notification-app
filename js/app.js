@@ -58,10 +58,6 @@ class PushNotificationApp {
             btn.addEventListener('click', (e) => this.switchTab(e.target.dataset.tab));
         });
 
-        // 通知タイプ切り替え
-        document.querySelectorAll('input[name="notification-type"]').forEach(radio => {
-            radio.addEventListener('change', () => this.toggleNotificationSettings());
-        });
 
         // フォーム送信
         document.getElementById('message-form').addEventListener('submit', (e) => {
@@ -145,54 +141,31 @@ class PushNotificationApp {
         }
     }
 
-    // 通知設定切り替え
-    toggleNotificationSettings() {
-        const type = document.querySelector('input[name="notification-type"]:checked').value;
-        const timerSettings = document.querySelector('.timer-settings');
-        const scheduleSettings = document.querySelector('.schedule-settings');
-
-        if (type === 'timer') {
-            timerSettings.style.display = 'block';
-            scheduleSettings.style.display = 'none';
-        } else {
-            timerSettings.style.display = 'none';
-            scheduleSettings.style.display = 'block';
-        }
-    }
 
     // 通知作成
     async createNotification() {
         const messageText = document.getElementById('message-text').value;
-        const notificationType = document.querySelector('input[name="notification-type"]:checked').value;
         
-        if (this.notifications.length >= 5) {
-            alert('通知は最大5件まで登録できます。');
+        // 既存の通知をすべて削除（1件制限）
+        await this.clearAllNotifications();
+
+        const minutes = parseInt(document.getElementById('timer-minutes').value);
+        
+        // 入力検証
+        if (minutes < 1 || minutes > 30) {
+            alert('時間4は1〜30分の範囲で入力してください。');
             return;
         }
 
         const notification = {
             message: messageText,
             character: this.characters[this.currentCharacterIndex].name,
-            type: notificationType,
+            type: 'timer',
             active: true,
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            triggerTime: new Date(Date.now() + minutes * 60000).toISOString(),
+            settings: { minutes }
         };
-
-        if (notificationType === 'timer') {
-            const minutes = parseInt(document.getElementById('timer-minutes').value);
-            const snoozeEnabled = document.getElementById('snooze-enabled').checked;
-            
-            notification.triggerTime = new Date(Date.now() + minutes * 60000).toISOString();
-            notification.snoozeEnabled = snoozeEnabled;
-            notification.settings = { minutes, snoozeEnabled };
-        } else {
-            const time = document.getElementById('schedule-time').value;
-            const weekdays = Array.from(document.querySelectorAll('.weekday-label input:checked')).map(cb => parseInt(cb.value));
-            
-            notification.scheduleTime = time;
-            notification.weekdays = weekdays;
-            notification.settings = { time, weekdays };
-        }
 
         try {
             await this.saveNotification(notification);
@@ -275,63 +248,21 @@ class PushNotificationApp {
 
     // 通知スケジュール
     scheduleNotification(notification) {
-        console.log('通知をスケジュール:', notification);
+        console.log('タイマー通知をスケジュール:', notification);
         
-        if (notification.type === 'timer') {
-            const delay = new Date(notification.triggerTime) - new Date();
-            console.log('タイマー遅延:', delay, 'ms (約', Math.round(delay/1000/60), '分)');
-            
-            if (delay > 0) {
-                setTimeout(() => {
-                    console.log('タイマー通知実行:', notification.message);
-                    this.showNotification(notification);
-                }, delay);
-            } else {
-                console.warn('過去の時刻が指定されました');
-            }
+        const delay = new Date(notification.triggerTime) - new Date();
+        console.log('タイマー遅延:', delay, 'ms (約', Math.round(delay/1000/60), '分)');
+        
+        if (delay > 0) {
+            setTimeout(() => {
+                console.log('タイマー通知実行:', notification.message);
+                this.showNotification(notification);
+            }, delay);
         } else {
-            this.scheduleRecurringNotification(notification);
+            console.warn('過去の時刻が指定されました');
         }
     }
 
-    // 繰り返し通知スケジュール
-    scheduleRecurringNotification(notification) {
-        console.log('スケジュール通知設定:', notification);
-        
-        const checkAndSchedule = () => {
-            const now = new Date();
-            const [hours, minutes] = notification.scheduleTime.split(':').map(Number);
-            const today = now.getDay();
-            
-            console.log('スケジュールチェック:', {
-                現在曜日: today,
-                対象曜日: notification.weekdays,
-                時刻: `${hours}:${minutes}`
-            });
-            
-            // 今日が対象曜日かチェック
-            if (notification.weekdays.includes(today)) {
-                const scheduledTime = new Date();
-                scheduledTime.setHours(hours, minutes, 0, 0);
-                
-                const delay = scheduledTime - now;
-                console.log('今日のスケジュール遅延:', delay, 'ms');
-                
-                if (delay > 0) {
-                    // 今日の指定時刻に通知
-                    setTimeout(() => {
-                        console.log('スケジュール通知実行:', notification.message);
-                        this.showNotification(notification);
-                    }, delay);
-                }
-            }
-            
-            // 次のチェックを約1時間後にスケジュール
-            setTimeout(checkAndSchedule, 60 * 60 * 1000);
-        };
-        
-        checkAndSchedule();
-    }
 
     // 通知表示
     showNotification(notification) {
@@ -350,7 +281,7 @@ class PushNotificationApp {
                     body: notification.message,
                     icon: './images/icon-512x512.png',
                     badge: './images/icon-512x512.png',
-                    tag: notification.id.toString(),
+                    tag: notification.id ? notification.id.toString() : 'notification',
                     requireInteraction: true
                 });
 
@@ -360,13 +291,6 @@ class PushNotificationApp {
                     window.focus();
                     notif.close();
                 };
-
-                if (notification.snoozeEnabled && notification.type === 'timer') {
-                    setTimeout(() => {
-                        console.log('スヌーズ通知実行');
-                        this.showNotification(notification);
-                    }, 5 * 60 * 1000);
-                }
             } catch (error) {
                 console.error('通知表示エラー:', error);
             }
@@ -467,6 +391,26 @@ class PushNotificationApp {
             } catch (error) {
                 console.error('Service Worker registration failed:', error);
             }
+        }
+    }
+
+    // 全通知削除
+    async clearAllNotifications() {
+        if (this.notifications.length === 0) return;
+        
+        try {
+            const transaction = this.db.transaction(['notifications'], 'readwrite');
+            const objectStore = transaction.objectStore('notifications');
+            
+            // 全ての通知を削除
+            for (const notification of this.notifications) {
+                await objectStore.delete(notification.id);
+            }
+            
+            this.notifications = [];
+            console.log('既存の通知を全て削除しました');
+        } catch (error) {
+            console.error('通知削除エラー:', error);
         }
     }
 }

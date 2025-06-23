@@ -54,44 +54,12 @@
                             <textarea id="message-text" placeholder="未来の自分への伝言を入力してください" required></textarea>
                         </div>
                         
-                        <div class="form-group">
-                            <label>通知タイプ</label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="notification-type" value="timer" checked>
-                                    <span>タイマー（○分後）</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="notification-type" value="schedule">
-                                    <span>スケジュール（日時指定）</span>
-                                </label>
-                            </div>
-                        </div>
                         
                         <!-- タイマー設定 -->
-                        <div class="form-group timer-settings">
-                            <label for="timer-minutes">何分後？</label>
-                            <input type="number" id="timer-minutes" min="1" max="1440" value="10">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="snooze-enabled">
-                                <span>スヌーズ機能（5分間隔）</span>
-                            </label>
-                        </div>
-                        
-                        <!-- スケジュール設定 -->
-                        <div class="form-group schedule-settings" style="display: none;">
-                            <label for="schedule-time">時刻</label>
-                            <input type="time" id="schedule-time">
-                            <label>曜日（繰り返し）</label>
-                            <div class="weekday-group">
-                                <label class="weekday-label"><input type="checkbox" value="0">日</label>
-                                <label class="weekday-label"><input type="checkbox" value="1">月</label>
-                                <label class="weekday-label"><input type="checkbox" value="2">火</label>
-                                <label class="weekday-label"><input type="checkbox" value="3">水</label>
-                                <label class="weekday-label"><input type="checkbox" value="4">木</label>
-                                <label class="weekday-label"><input type="checkbox" value="5">金</label>
-                                <label class="weekday-label"><input type="checkbox" value="6">土</label>
-                            </div>
+                        <div class="form-group">
+                            <label for="timer-minutes">何分後に通知しますか？</label>
+                            <input type="number" id="timer-minutes" min="1" max="30" value="5">
+                            <small style="color: #666; display: block; margin-top: 5px;">（範囲: 1〜30分）</small>
                         </div>
                         
                         <button type="submit" class="submit-btn">伝言を託す</button>
