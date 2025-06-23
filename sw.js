@@ -183,9 +183,34 @@ self.addEventListener('message', (event) => {
         self.skipWaiting();
     }
     
+    // テスト通知表示
+    if (event.data && event.data.type === 'SHOW_TEST_NOTIFICATION') {
+        console.log('Service Workerでテスト通知を表示します');
+        
+        self.registration.showNotification(event.data.title, {
+            body: event.data.body,
+            icon: event.data.icon || './images/icon-512x512.png',
+            badge: './images/icon-512x512.png',
+            tag: 'sw-test-notification',
+            requireInteraction: true,
+            actions: [
+                {
+                    action: 'ok',
+                    title: 'OK'
+                }
+            ]
+        }).then(() => {
+            console.log('✅ Service Worker通知表示成功');
+        }).catch((error) => {
+            console.error('❌ Service Worker通知表示失敗:', error);
+        });
+    }
+    
     // メインスレッドに応答
-    event.ports[0].postMessage({
-        type: 'RESPONSE',
-        message: 'Service Workerから応答'
-    });
+    if (event.ports && event.ports[0]) {
+        event.ports[0].postMessage({
+            type: 'RESPONSE',
+            message: 'Service Workerから応答'
+        });
+    }
 });
